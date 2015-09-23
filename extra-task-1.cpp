@@ -174,7 +174,6 @@ double time_to_utc(int utc_offset, double time)
 
 double time_from_utc(int utc_offset, double time)
 {
-	return 0;
     /*
         Return UTC time in time zone utc_offset.
 
@@ -202,6 +201,14 @@ double time_from_utc(int utc_offset, double time)
         >>> time_from_utc(+1, 23.0)
         0.0
     */
+	double t = time + utc_offset;
+	if (t < 0)
+		t += 24;
+
+	if (t >= 24)
+		t -= 24;
+	return t;
+
 }
 
 int main() {
@@ -240,4 +247,12 @@ int main() {
 	assert(time_to_utc(-1, 0.0) - 1 < DBL_EPSILON);
 	assert(time_to_utc(-1, 23.0) - 0 < DBL_EPSILON);
 
+	assert(time_from_utc(+0, 12.0) - 12 < DBL_EPSILON);
+	assert(time_from_utc(+1, 12.0) - 13 < DBL_EPSILON);
+	assert(time_from_utc(-1, 12.0) - 11 < DBL_EPSILON);
+	assert(time_from_utc(+6, 6.0) - 12 < DBL_EPSILON);
+	assert(time_from_utc(-7, 6.0) - 23 < DBL_EPSILON);
+	assert(time_from_utc(-1, 0.0) - 23 < DBL_EPSILON);
+	assert(time_from_utc(-1, 23.0) - 22 < DBL_EPSILON);
+	assert(time_from_utc(+1, 23.0) - 0 < DBL_EPSILON);
 }
